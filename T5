@@ -1,0 +1,21 @@
+import numpy as np
+import pandas as pd
+
+pip install textgenie
+
+from textgenie import TextGenie
+
+textgenie = TextGenie("hetpandya/t5-small-tapaco", "bert-base-uncased")
+
+df = pd.read_csv('news.csv')
+df.head()
+
+df.rename(columns={'Text': 'Message', 'label': 'Category'}, inplace=True)
+
+df['Message']= df['Message'].str.replace(r'[^A-Za-z0-9 .]+', ' ')
+df.head()
+
+df.to_csv ( 'news_v2.csv' , header=None,index = False )
+
+# Augment data in a csv file with labels
+augmented_dataset = textgenie.magic_lamp("news_v2.csv","paraphrase: ",n_paraphrase_predictions=3,n_mask_predictions=0,convert_to_active=True,label_column="Label",data_column="Text",column_names=["Text","Label"])
